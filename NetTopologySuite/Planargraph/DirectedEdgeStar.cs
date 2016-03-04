@@ -1,6 +1,9 @@
 using System.Collections.Generic;
+#if NET35
+using System.Linq;
+#endif
 using GeoAPI.Geometries;
-using Wintellect.PowerCollections;
+using NetTopologySuite.Utilities;
 
 namespace NetTopologySuite.Planargraph
 {
@@ -13,7 +16,7 @@ namespace NetTopologySuite.Planargraph
         /// <summary>
         /// The underlying list of outgoing DirectedEdges.
         /// </summary>
-        private readonly BigList<DirectedEdge> _outEdges = new BigList<DirectedEdge>();
+        private readonly List<DirectedEdge> _outEdges = new List<DirectedEdge>();
 
         private bool _sorted;
 
@@ -94,7 +97,10 @@ namespace NetTopologySuite.Planargraph
         {
             if (!_sorted)
             {
-                _outEdges.Sort();
+                // JTS does a stable sort here.  List<T>.Sort is not stable.
+                var inSortedOrder = new List<DirectedEdge>(CollectionUtil.StableSort(_outEdges));
+                _outEdges.Clear();
+                _outEdges.AddRange(inSortedOrder);
                 _sorted = true;                
             }
         }

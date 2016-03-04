@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using GeoAPI.Geometries;
 #if !NET35 && !PCL
 using GeoAPI;
@@ -18,7 +19,7 @@ namespace NetTopologySuite.Geometries.Utilities
     /// Geometry objects are intended to be treated as immutable.
     /// This class allows you to "modifies" a Geometrys
     /// by traversing them, applying a user-defined
-    /// <see cref="IGeometryEditorOperation"/> or <see cref="CoordinateOperation"/>
+    /// <see cref="IGeometryEditorOperation"/>, <see cref="CoordinateSequenceOperation"/> or <see cref="CoordinateOperation"/>
     /// and creating a new Geometrys with the same structure but
     /// (possibly) modified components.
     /// <para>
@@ -276,6 +277,11 @@ namespace NetTopologySuite.Geometries.Utilities
         /// </summary>
         public class CoordinateSequenceOperation : IGeometryEditorOperation
         {
+            public CoordinateSequenceOperation()
+                :this((s, g) => s)
+            {
+            }
+
             public CoordinateSequenceOperation(Func<ICoordinateSequence, IGeometry, ICoordinateSequence> editSequence)
             {
                 EditSequence = editSequence;
@@ -314,7 +320,7 @@ namespace NetTopologySuite.Geometries.Utilities
             ///// <param name="coordSeq">The coordinate array to operate on</param>
             ///// <param name="geometry">The geometry containing the coordinate list</param>
             /// <returns>An edited coordinate sequence (which may be the same as the input)</returns>
-            private Func<ICoordinateSequence, IGeometry, ICoordinateSequence> EditSequence { get; set; }
+            protected Func<ICoordinateSequence, IGeometry, ICoordinateSequence> EditSequence { get; set; }
         }
 
     }

@@ -25,10 +25,13 @@
 		</dependencies>
 	</metadata>
 	<files>
+		<file src="Release\v2.0\AnyCPU\NetTopologySuite.IO.dll" target="lib\net20" />
+		<file src="Release\v2.0\AnyCPU\NetTopologySuite.IO.pdb" target="lib\net20" />
+		<file src="Release\v2.0\AnyCPU\NetTopologySuite.IO.xml" target="lib\net20" />
 		<file src="Release\v2.0\AnyCPU\NetTopologySuite.IO.ShapeFile.dll" target="lib\net20" />
 		<file src="Release\v2.0\AnyCPU\NetTopologySuite.IO.ShapeFile.pdb" target="lib\net20" />
 		<file src="Release\v2.0\AnyCPU\NetTopologySuite.IO.ShapeFile.xml" target="lib\net20" />
-    <file src="Release\v2.0\AnyCPU\NetTopologySuite.IO.GeoTools.dll" target="lib\net20" />
+		<file src="Release\v2.0\AnyCPU\NetTopologySuite.IO.GeoTools.dll" target="lib\net20" />
 		<file src="Release\v2.0\AnyCPU\NetTopologySuite.IO.GeoTools.pdb" target="lib\net20" />
 		<file src="Release\v2.0\AnyCPU\NetTopologySuite.IO.GeoTools.xml" target="lib\net20" />
 		<file src="Release\v2.0\AnyCPU\NetTopologySuite.IO.MsSqlSpatial.dll" target="lib\net20" />
@@ -38,10 +41,13 @@
 		<file src="Release\v2.0\AnyCPU\NetTopologySuite.IO.PostGis.pdb" target="lib\net20" />		
 		<file src="Release\v2.0\AnyCPU\NetTopologySuite.IO.PostGis.xml" target="lib\net20" />
 
+		<file src="Release\v3.5\AnyCPU\NetTopologySuite.IO.dll" target="lib\net35-client" />
+		<file src="Release\v3.5\AnyCPU\NetTopologySuite.IO.pdb" target="lib\net35-client" />
+		<file src="Release\v3.5\AnyCPU\NetTopologySuite.IO.xml" target="lib\net35-client" />
 		<file src="Release\v3.5\AnyCPU\NetTopologySuite.IO.ShapeFile.dll" target="lib\net35-client" />
 		<file src="Release\v3.5\AnyCPU\NetTopologySuite.IO.ShapeFile.pdb" target="lib\net35-client" />
 		<file src="Release\v3.5\AnyCPU\NetTopologySuite.IO.ShapeFile.xml" target="lib\net35-client" />
-    <file src="Release\v3.5\AnyCPU\NetTopologySuite.IO.GeoTools.dll" target="lib\net35-client" />
+		<file src="Release\v3.5\AnyCPU\NetTopologySuite.IO.GeoTools.dll" target="lib\net35-client" />
 		<file src="Release\v3.5\AnyCPU\NetTopologySuite.IO.GeoTools.pdb" target="lib\net35-client" />
 		<file src="Release\v3.5\AnyCPU\NetTopologySuite.IO.GeoTools.xml" target="lib\net35-client" />
 		<file src="Release\v3.5\AnyCPU\NetTopologySuite.IO.MsSqlSpatial.dll" target="lib\net35-client" />
@@ -51,13 +57,16 @@
 		<file src="Release\v3.5\AnyCPU\NetTopologySuite.IO.PostGis.pdb" target="lib\net35-client" />
 		<file src="Release\v3.5\AnyCPU\NetTopologySuite.IO.PostGis.xml" target="lib\net35-client" />
 
+		<file src="Release\v4.0\AnyCPU\NetTopologySuite.IO.dll" target="lib\net40-client" />
+		<file src="Release\v4.0\AnyCPU\NetTopologySuite.IO.pdb" target="lib\net40-client" />
+		<file src="Release\v4.0\AnyCPU\NetTopologySuite.IO.xml" target="lib\net40-client" />
 		<file src="Release\v4.0\AnyCPU\NetTopologySuite.IO.ShapeFile.dll" target="lib\net40-client" />
 		<file src="Release\v4.0\AnyCPU\NetTopologySuite.IO.ShapeFile.pdb" target="lib\net40-client" />
 		<file src="Release\v4.0\AnyCPU\NetTopologySuite.IO.ShapeFile.xml" target="lib\net40-client" />
-    <file src="Release\v4.0\AnyCPU\NetTopologySuite.IO.ShapeFile.Extended.dll" target="lib\net40-client" />
-    <file src="Release\v4.0\AnyCPU\NetTopologySuite.IO.ShapeFile.Extended.pdb" target="lib\net40-client" />
-    <file src="Release\v4.0\AnyCPU\NetTopologySuite.IO.ShapeFile.Extended.xml" target="lib\net40-client" />
-    <file src="Release\v4.0\AnyCPU\NetTopologySuite.IO.GeoTools.dll" target="lib\net40-client" />
+		<file src="Release\v4.0\AnyCPU\NetTopologySuite.IO.ShapeFile.Extended.dll" target="lib\net40-client" />
+ 		<file src="Release\v4.0\AnyCPU\NetTopologySuite.IO.ShapeFile.Extended.pdb" target="lib\net40-client" />
+		<file src="Release\v4.0\AnyCPU\NetTopologySuite.IO.ShapeFile.Extended.xml" target="lib\net40-client" />
+		<file src="Release\v4.0\AnyCPU\NetTopologySuite.IO.GeoTools.dll" target="lib\net40-client" />
 		<file src="Release\v4.0\AnyCPU\NetTopologySuite.IO.GeoTools.pdb" target="lib\net40-client" />
 		<file src="Release\v4.0\AnyCPU\NetTopologySuite.IO.GeoTools.xml" target="lib\net40-client" />
 		<file src="Release\v4.0\AnyCPU\NetTopologySuite.IO.MsSqlSpatial.dll" target="lib\net40-client" />
@@ -67,13 +76,16 @@
 		<file src="Release\v4.0\AnyCPU\NetTopologySuite.IO.PostGis.pdb" target="lib\net40-client" />
 		<file src="Release\v4.0\AnyCPU\NetTopologySuite.IO.PostGis.xml" target="lib\net40-client" />
 
+		<file src="Release\v4.0.3\AnyCPU\NetTopologySuite.IO.dll" target="lib\net403-client" />
+		<file src="Release\v4.0.3\AnyCPU\NetTopologySuite.IO.pdb" target="lib\net403-client" />
+		<file src="Release\v4.0.3\AnyCPU\NetTopologySuite.IO.xml" target="lib\net403-client" />
 		<file src="Release\v4.0.3\AnyCPU\NetTopologySuite.IO.ShapeFile.dll" target="lib\net403-client" />
 		<file src="Release\v4.0.3\AnyCPU\NetTopologySuite.IO.ShapeFile.pdb" target="lib\net403-client" />
 		<file src="Release\v4.0.3\AnyCPU\NetTopologySuite.IO.ShapeFile.xml" target="lib\net403-client" />
-    <file src="Release\v4.0.3\AnyCPU\NetTopologySuite.IO.ShapeFile.Extended.dll" target="lib\net403-client" />
-    <file src="Release\v4.0.3\AnyCPU\NetTopologySuite.IO.ShapeFile.Extended.pdb" target="lib\net403-client" />
-    <file src="Release\v4.0.3\AnyCPU\NetTopologySuite.IO.ShapeFile.Extended.xml" target="lib\net403-client" />
-    <file src="Release\v4.0.3\AnyCPU\NetTopologySuite.IO.GeoTools.dll" target="lib\net403-client" />
+		<file src="Release\v4.0.3\AnyCPU\NetTopologySuite.IO.ShapeFile.Extended.dll" target="lib\net403-client" />
+ 		<file src="Release\v4.0.3\AnyCPU\NetTopologySuite.IO.ShapeFile.Extended.pdb" target="lib\net403-client" />
+		<file src="Release\v4.0.3\AnyCPU\NetTopologySuite.IO.ShapeFile.Extended.xml" target="lib\net403-client" />
+		<file src="Release\v4.0.3\AnyCPU\NetTopologySuite.IO.GeoTools.dll" target="lib\net403-client" />
 		<file src="Release\v4.0.3\AnyCPU\NetTopologySuite.IO.GeoTools.pdb" target="lib\net403-client" />
 		<file src="Release\v4.0.3\AnyCPU\NetTopologySuite.IO.GeoTools.xml" target="lib\net403-client" />
 		<file src="Release\v4.0.3\AnyCPU\NetTopologySuite.IO.MsSqlSpatial.dll" target="lib\net403-client" />
@@ -83,13 +95,16 @@
 		<file src="Release\v4.0.3\AnyCPU\NetTopologySuite.IO.PostGis.pdb" target="lib\net403-client" />
 		<file src="Release\v4.0.3\AnyCPU\NetTopologySuite.IO.PostGis.xml" target="lib\net403-client" />
 
+		<file src="Release\v4.5\AnyCPU\NetTopologySuite.IO.dll" target="lib\net45" />
+		<file src="Release\v4.5\AnyCPU\NetTopologySuite.IO.pdb" target="lib\net45" />
+		<file src="Release\v4.5\AnyCPU\NetTopologySuite.IO.xml" target="lib\net45" />
 		<file src="Release\v4.5\AnyCPU\NetTopologySuite.IO.ShapeFile.dll" target="lib\net45" />
 		<file src="Release\v4.5\AnyCPU\NetTopologySuite.IO.ShapeFile.pdb" target="lib\net45" />
 		<file src="Release\v4.5\AnyCPU\NetTopologySuite.IO.ShapeFile.xml" target="lib\net45" />
-    <file src="Release\v4.5\AnyCPU\NetTopologySuite.IO.ShapeFile.Extended.dll" target="lib\net45" />
-    <file src="Release\v4.5\AnyCPU\NetTopologySuite.IO.ShapeFile.Extended.pdb" target="lib\net45" />
-    <file src="Release\v4.5\AnyCPU\NetTopologySuite.IO.ShapeFile.Extended.xml" target="lib\net45" />
-    <file src="Release\v4.5\AnyCPU\NetTopologySuite.IO.GeoTools.dll" target="lib\net45" />
+		<file src="Release\v4.5\AnyCPU\NetTopologySuite.IO.ShapeFile.Extended.dll" target="lib\net45" />
+		<file src="Release\v4.5\AnyCPU\NetTopologySuite.IO.ShapeFile.Extended.pdb" target="lib\net45" />
+		<file src="Release\v4.5\AnyCPU\NetTopologySuite.IO.ShapeFile.Extended.xml" target="lib\net45" />
+		<file src="Release\v4.5\AnyCPU\NetTopologySuite.IO.GeoTools.dll" target="lib\net45" />
 		<file src="Release\v4.5\AnyCPU\NetTopologySuite.IO.GeoTools.pdb" target="lib\net45" />
 		<file src="Release\v4.5\AnyCPU\NetTopologySuite.IO.GeoTools.xml" target="lib\net45" />
 		<file src="Release\v4.5\AnyCPU\NetTopologySuite.IO.MsSqlSpatial.dll" target="lib\net45" />

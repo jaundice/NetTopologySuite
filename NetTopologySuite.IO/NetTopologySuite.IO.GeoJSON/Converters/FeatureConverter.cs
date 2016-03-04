@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using GeoAPI.Geometries;
 using NetTopologySuite.Features;
 using Newtonsoft.Json;
@@ -29,11 +28,28 @@ namespace NetTopologySuite.IO.Converters
                 return;
 
             writer.WriteStartObject();
+
+            // type
             writer.WritePropertyName("type");
             writer.WriteValue("Feature");
+            
+            // Add the id here if present in attributes.
+            // It will be skipped in serialization of properties
+            if (feature.Attributes.Exists("id"))
+            {
+                var id = feature.Attributes["id"];
+                writer.WritePropertyName("id");
+                serializer.Serialize(writer, id);
+            }
+
+            // geometry
             writer.WritePropertyName("geometry");
             serializer.Serialize(writer, feature.Geometry);
+
+            // properties
+            writer.WritePropertyName("properties");
             serializer.Serialize(writer, feature.Attributes);
+
             writer.WriteEndObject();
         }
 
@@ -49,14 +65,7 @@ namespace NetTopologySuite.IO.Converters
         /// </returns>
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            reader.Read();
-            if (!(reader.TokenType == JsonToken.PropertyName && (string)reader.Value == "type"))
-                throw new ArgumentException("Expected token 'type' not found.");
-            reader.Read();
-            if (reader.TokenType != JsonToken.String && (string)reader.Value != "Feature")
-                throw new ArgumentException("Expected value 'Feature' not found.");
-            reader.Read();
-
+            bool read = reader.Read();
             object featureId = null;
             Feature feature = new Feature();
             while (reader.TokenType == JsonToken.PropertyName)
@@ -64,41 +73,53 @@ namespace NetTopologySuite.IO.Converters
                 string prop = (string)reader.Value;
                 switch (prop)
                 {
-                    case "id":                        
-                        reader.Read(); 
+                    case "type":
+                        read = reader.Read();
+                        if ((string)reader.Value != "Feature")
+                            throw new ArgumentException("Expected value 'Feature' not found.");
+                        read = reader.Read();
+                        break;
+                    case "id":
+                        read = reader.Read(); 
                         featureId = reader.Value;
-                        reader.Read(); 
+                        read = reader.Read(); 
                         break;                        
                     case "bbox":
                         // Read, but can't do anything with it, assigning Envelopes is impossible without reflection
-                        var bbox = serializer.Deserialize<Envelope>(reader);
+                        Envelope bbox = serializer.Deserialize<Envelope>(reader);
                         //Debug.WriteLine("BBOX: {0}", bbox.ToString());
                         break;
                     case "geometry":
-                        reader.Read();
+                        read = reader.Read();
                         if (reader.TokenType == JsonToken.Null)
                         {
-                            reader.Read();
+                            read = reader.Read();
                             break;
                         }
                             
                         if (reader.TokenType != JsonToken.StartObject)
                             throw new ArgumentException("Expected token '{' not found.");
-                        var geometry = serializer.Deserialize<IGeometry>(reader);
+                        IGeometry geometry = serializer.Deserialize<IGeometry>(reader);
                         feature.Geometry = geometry;
                         if (reader.TokenType != JsonToken.EndObject)
                             throw new ArgumentException("Expected token '}' not found.");
-                        reader.Read();
+                        read = reader.Read();
                         break;
                     case "properties":
+                        read = reader.Read();
+                        if (reader.TokenType != JsonToken.StartObject)
+                            throw new ArgumentException("Expected token '{' not found.");
                         feature.Attributes = serializer.Deserialize<AttributesTable>(reader);
+                        if (reader.TokenType != JsonToken.EndObject)
+                            throw new ArgumentException("Expected token '}' not found.");
+                        read = reader.Read();
                         break;
                     default:
-                    {                        
-                        reader.Read(); // move next                        
+                    {
+                        read = reader.Read(); // move next                        
                         // jump to next property
-                        while (reader.TokenType != JsonToken.PropertyName)
-                            reader.Read();                         
+                        while (read && reader.TokenType != JsonToken.PropertyName)
+                            read = reader.Read();
                         break;
                         //string err = String.Format("token unhandled: {0}.", prop);
                         //throw new ArgumentException(err);
@@ -106,10 +127,10 @@ namespace NetTopologySuite.IO.Converters
                 }
             }
 
-            if (reader.TokenType != JsonToken.EndObject)
+            if (read && reader.TokenType != JsonToken.EndObject)
                 throw new ArgumentException("Expected token '}' not found.");
-            reader.Read(); // move next
-
+            read = reader.Read(); // move next
+            
             IAttributesTable attributes = feature.Attributes;
             if (attributes != null)
             {

@@ -44,14 +44,13 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>$(SolutionDir)$(Configuration)\$(TargetFrameworkIdentifier)$(TargetFrameworkVersion)\$(Platform)\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET20;NET35;NET40</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <UseVSHostingProcess>false</UseVSHostingProcess>
@@ -60,7 +59,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>$(SolutionDir)$(Configuration)\$(TargetFrameworkIdentifier)$(TargetFrameworkVersion)\$(Platform)\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;NET20;NET35;NET40</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -119,6 +118,10 @@
     <Compile Include="Tests\Github\Issue28Fixture.cs" />
     <Compile Include="Tests\Github\Issue31Fixture.cs" />
     <Compile Include="Tests\Github\Issue4Fixture.cs" />
+    <Compile Include="Tests\Github\Issue58Fixture.cs" />
+    <Compile Include="Tests\Github\Issue61Fixture.cs" />
+    <Compile Include="Tests\Github\Issue62Fixture.cs" />
+    <Compile Include="Tests\Github\Issue87Fixture.cs" />
     <Compile Include="Tests\IO\GmlTest.cs" />
     <Compile Include="Tests\Github\Issue36Tests.cs" />
     <Compile Include="Tests\IO\PostGisTest.cs" />
@@ -126,6 +129,7 @@
     <Compile Include="Tests\IO\ShapeFileInvalidHeaderTest.cs" />
     <Compile Include="Tests\IO\ShapeFileReadTest.cs" />
     <Compile Include="Tests\IO\ShapefileWriteTest.cs" />
+    <Compile Include="Tests\IO\WKTReaderTests.cs" />
     <Compile Include="Tests\Operation\Linemerge\LineSequencerFileTest.cs" />
     <Compile Include="Tests\Performances\NodingValidatorFixture.cs" />
     <Compile Include="Tests\Performances\PreparedGeometryFixture.cs" />
@@ -254,10 +258,6 @@
       <Project>{5770DAA9-84E5-4770-AF43-F6B815894368}</Project>
       <Name>NetTopologySuite</Name>
     </ProjectReference>
-    <ProjectReference Include="..\PowerCollections\Source\PowerCollections\PowerCollections.csproj">
-      <Project>{5821977d-ac2c-4912-bcd0-6e6b1a756167}</Project>
-      <Name>PowerCollections</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Tests\Readme.txt" />
@@ -310,5 +310,4 @@
     <PreBuildEvent>
     </PreBuildEvent>
   </PropertyGroup>
-  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
 </Project>

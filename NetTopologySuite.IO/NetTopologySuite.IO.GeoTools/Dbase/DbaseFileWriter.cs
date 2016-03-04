@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -24,8 +23,9 @@ namespace NetTopologySuite.IO
         private bool _headerWritten;
 
         /// <summary>
-        ///     Initializes a new instance of the DbaseFileWriter class.
+        /// Initializes a new instance of the DbaseFileWriter class with standard windows encoding (CP1252, LATIN1)
         /// </summary>
+        /// <param name="filename">The path to the dbase file</param>
         public DbaseFileWriter(string filename) : this(filename,
             Encoding.GetEncoding(1252)
             )
@@ -33,38 +33,65 @@ namespace NetTopologySuite.IO
         }
 
         /// <summary>
-        ///     Initializes a new instance of the DbaseFileWriter class.
+        /// Initializes a new instance of the DbaseFileWriter class with the provided encoding.
         /// </summary>
-        public DbaseFileWriter(string filename, Encoding enc)
-            : this(new ShapefileStreamProviderRegistry(filename, false, true, false), enc)
+        /// <param name="filename">The path to the dbase file</param>
+        /// <param name="encoding">The encoding to use</param>
+        public DbaseFileWriter(string filename, Encoding encoding)
+            : this(new ShapefileStreamProviderRegistry(filename), encoding)
         {
         }
 
-        public DbaseFileWriter(IStreamProviderRegistry streamProviderRegistry, Encoding enc)
-        {
-            if (streamProviderRegistry == null)
-                throw new ArgumentNullException("streamProviderRegistry");
-            if (enc == null)
-                throw new ArgumentNullException("enc");
-
-            _encoding = enc;
-            _writer = new BinaryWriter(streamProviderRegistry[StreamTypes.Data].OpenWrite(false), _encoding);
-        }
-
+        /// <summary>
+        /// Initializes a new instance of the DbaseFileWriter class using the provided <paramref name="streamProviderRegistry"/> and the default encoding
+        /// </summary>
+        /// <param name="streamProviderRegistry">The stream provider registry</param>
         public DbaseFileWriter(IStreamProviderRegistry streamProviderRegistry)
             : this(streamProviderRegistry, Encoding.GetEncoding(1252))
         {
         }
 
         /// <summary>
+        /// Initializes a new instance of the DbaseFileWriter class using the provided <paramref name="streamProviderRegistry"/> and the given <paramref name="encoding"/>.
         /// </summary>
-        /// <param name="header"></param>
+        /// <param name="streamProviderRegistry">The stream provider registry</param>
+        /// <param name="encoding">The encoding</param>
+        public DbaseFileWriter(IStreamProviderRegistry streamProviderRegistry, Encoding encoding)
+        {
+            if (streamProviderRegistry == null)
+                throw new ArgumentNullException("streamProviderRegistry");
+            if (encoding == null)
+                throw new ArgumentNullException("encoding");
+
+            _encoding = encoding;
+            _writer = new BinaryWriter(streamProviderRegistry[StreamTypes.Data].OpenWrite(false), _encoding);
+        }
+
+        /// <summary>
+        /// Method to write <paramref name="header"/> to the dbase stream
+        /// </summary>
+        /// <param name="header">The header to write</param>
         public void Write(DbaseFileHeader header)
         {
+            //if (header == null)
+            //    throw new ArgumentNullException("header");
+            ////if (_recordsWritten)
+            ////    throw new InvalidOperationException("Records have already been written. Header file needs to be written first.");
+            //_headerWritten = true;
+
+            //if (header.Encoding.WindowsCodePage != _encoding.WindowsCodePage)
+            //{
+            //    header.Encoding = _encoding;
+            //}
+
+            //header.WriteHeader(_writer);
+            //_header = header;
+
             if (header == null)
                 throw new ArgumentNullException("header");
             //if (_recordsWritten)
             //    throw new InvalidOperationException("Records have already been written. Header file needs to be written first.");
+
             _headerWritten = true;
 
             if (header.Encoding.WindowsCodePage != _encoding.WindowsCodePage)
@@ -72,13 +99,33 @@ namespace NetTopologySuite.IO
                 header.Encoding = _encoding;
             }
 
+            // Get the current position
+            var currentPosition = (int)_writer.BaseStream.Position;
+
+            //Header should always be written first in the file
+            if (_writer.BaseStream.Position != 0)
+                _writer.Seek(0, SeekOrigin.Begin);
+
+            // actually write the header
             header.WriteHeader(_writer);
+
+            // reposition the stream
+            if (currentPosition != 0)
+                _writer.Seek(currentPosition, SeekOrigin.Begin);
+
             _header = header;
+
         }
 
         /// <summary>
+        /// Gets a value indicating if the header has been written or not
         /// </summary>
-        /// <param name="columnValues"></param>
+        public bool HeaderWritten { get { return _headerWritten; } }
+
+        /// <summary>
+        /// Method to write the column values for a dbase record
+        /// </summary>
+        /// <param name="columnValues">The column values</param>
         public void Write(IList columnValues)
         {
             if (columnValues == null)
@@ -86,7 +133,16 @@ namespace NetTopologySuite.IO
             if (!_headerWritten)
                 throw new InvalidOperationException("Header records need to be written first.");
             var i = 0;
-            _writer.Write((byte)0x20); // the deleted flag
+
+            // Check integrety of data
+            if (columnValues.Count != _header.NumFields)
+                throw new ArgumentException("The number of provided values does not match the number of fields defined", "columnValues");
+
+            // Get the current position
+            var initialPosition = _writer.BaseStream.Position;
+
+            // the deleted flag
+            _writer.Write((byte)0x20); 
             foreach (var columnValue in columnValues)
             {
                 var headerField = _header.Fields[i];
@@ -132,26 +188,47 @@ namespace NetTopologySuite.IO
                 {
                     Write((char)columnValue, headerField.Length);
                 }
-
+                else
+                {
+                    throw new ArgumentException(
+                        string.Format("Invalid argument for column '{0}': {1}", 
+                                      headerField.Name, columnValue),
+                        "columnValues");
+                }
                 i++;
             }
+
+            // Get the number of bytes written
+            var bytesWritten = _writer.BaseStream.Position - initialPosition;
+
+            // Get the record length (at least one byte for the deleted marker)
+            var recordLength = Math.Max(1, _header.RecordLength);
+
+            // Check if the correct amount of bytes was written
+            if (bytesWritten != recordLength)
+                throw new ShapefileException("Error writing Dbase record");
         }
 
         /// <summary>
-        ///     Determine if the type provided is a "real" or "float" type.
+        /// Function to determine if the <paramref name="type"/> is a <see cref="System.Single"/> or <see cref="System.Double"/> type.
         /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
+        /// <param name="type">The type to test</param>
+        /// <returns><value>true</value> if it is either a <see cref="System.Single"/> or <see cref="System.Double"/> type, otherwise <value>false</value></returns>
         private static bool IsRealType(Type type)
         {
             return ((type == typeof(double)) || (type == typeof(float)));
         }
 
         /// <summary>
-        ///     Determine if the type provided is a "whole" number type.
+        /// Function to determine if <paramref name="type"/> is a "whole" number type.
         /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
+        /// <param name="type">The type to test</param>
+        /// <returns><value>true</value> if <paramref name="type"/>is one of <list type="bullet">
+        /// <item><see cref="System.Int16"/>, <see cref="System.UInt16"/></item>
+        /// <item><see cref="System.Int32"/>, <see cref="System.UInt32"/></item>
+        /// <item><see cref="System.Int64"/>, <see cref="System.UInt64"/></item>
+        /// </list>, otherwise <value>false</value>
+        /// </returns>
         private static bool IsIntegerType(Type type)
         {
             return ((type == typeof(short)) || (type == typeof(int)) || (type == typeof(long)) ||
@@ -159,12 +236,12 @@ namespace NetTopologySuite.IO
         }
 
         /// <summary>
-        ///     Write a decimal value to the file.
+        /// Write a decimal value to the file.
         /// </summary>
         /// <param name="number">The value to write.</param>
         /// <param name="length">The overall width of the column being written to.</param>
         /// <param name="decimalCount">The number of decimal places in the column.</param>
-        public void Write(decimal number, int length, int decimalCount)
+        private void Write(decimal number, int length, int decimalCount)
         {
             string outString;
 
@@ -215,31 +292,31 @@ namespace NetTopologySuite.IO
                 _writer.Write(c);
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="number"></param>
-        /// <param name="length"></param>
-        /// <param name="decimalCount"></param>
-        public void Write(double number, int length, int decimalCount)
-        {
-            Write(Convert.ToDecimal(number), length, decimalCount);
-        }
+        ///// <summary>
+        ///// </summary>
+        ///// <param name="number"></param>
+        ///// <param name="length"></param>
+        ///// <param name="decimalCount"></param>
+        //private void Write(double number, int length, int decimalCount)
+        //{
+        //    Write(Convert.ToDecimal(number), length, decimalCount);
+        //}
 
-        /// <summary>
-        /// </summary>
-        /// <param name="number"></param>
-        /// <param name="length"></param>
-        /// <param name="decimalCount"></param>
-        public void Write(float number, int length, int decimalCount)
-        {
-            Write(Convert.ToDecimal(number), length, decimalCount);
-        }
+        ///// <summary>
+        ///// </summary>
+        ///// <param name="number"></param>
+        ///// <param name="length"></param>
+        ///// <param name="decimalCount"></param>
+        //private void Write(float number, int length, int decimalCount)
+        //{
+        //    Write(Convert.ToDecimal(number), length, decimalCount);
+        //}
 
         /// <summary>
         /// </summary>
         /// <param name="text"></param>
         /// <param name="length"></param>
-        public void Write(string text, int length)
+        private void Write(string text, int length)
         {
             // ensure string is not too big, multibyte encodings can cause more bytes to be written
             var bytes = _encoding.GetBytes(text);
@@ -261,7 +338,7 @@ namespace NetTopologySuite.IO
         /// <summary>
         /// </summary>
         /// <param name="date"></param>
-        public void Write(DateTime date)
+        private void Write(DateTime date)
         {
             foreach (var c in date.Year.ToString(NumberFormatInfo.InvariantInfo))
                 _writer.Write(c);
@@ -280,7 +357,7 @@ namespace NetTopologySuite.IO
         /// <summary>
         /// </summary>
         /// <param name="flag"></param>
-        public void Write(bool flag)
+        private void Write(bool flag)
         {
             _writer.Write(flag ? 'T' : 'F');
         }
@@ -293,7 +370,7 @@ namespace NetTopologySuite.IO
         ///     The length of the column to write in. Writes
         ///     left justified, filling with spaces.
         /// </param>
-        public void Write(char c, int length)
+        private void Write(char c, int length)
         {
             var str = string.Empty;
             str += c;
@@ -304,18 +381,22 @@ namespace NetTopologySuite.IO
         ///     Write a byte to the file.
         /// </summary>
         /// <param name="number">The byte.</param>
-        public void Write(byte number)
+        private void Write(byte number)
         {
             _writer.Write(number);
         }
 
         /// <summary>
+        /// Method to close this dbase file writer
         /// </summary>
         public void Close()
         {
             _writer.Close();
         }
 
+        /// <summary>
+        /// Method to dispose this writers instance
+        /// </summary>
         public void Dispose()
         {
             if (!IsDisposed)
@@ -327,6 +408,10 @@ namespace NetTopologySuite.IO
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="disposing"></param>
         private void Dispose(bool disposing)
         {
             if (disposing)
@@ -335,12 +420,25 @@ namespace NetTopologySuite.IO
             }
         }
 
+        /// <summary>
+        /// Finalizer
+        /// </summary>
         ~DbaseFileWriter()
         {
             Dispose(false);
-            Debug.WriteLine("Finalizer Called on {0}", GetType());
         }
 
+        /// <summary>
+        /// Gets a value indicating that this dbase file writer has been disposed
+        /// </summary>
         public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Method to write the end of dbase file marker (<value>0x1A</value>).
+        /// </summary>
+        public void WriteEndOfDbf()
+        {
+            Write((byte)0x1A);
+        }
     }
 }

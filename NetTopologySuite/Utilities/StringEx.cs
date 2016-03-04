@@ -1,15 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using GeoAPI.Operation.Buffer;
 
 namespace NetTopologySuite.Utilities
 {
-    public static class StringEx
+    internal static class StringEx
     {
-        public static bool IsNullOrWhitespaceNTS(this string s)
+        /// <summary>
+        /// Framework replacement for string.IsNullOrWhitespace
+        /// </summary>
+        /// <param name="s">The string to test</param>
+        /// <returns>A value indicating if <paramref name="s"/> is null, empty or only contains whitespace characters</returns>
+        public static bool IsNullOrWhitespaceNTS(string s)
         {
             return string.IsNullOrEmpty(s) || Regex.IsMatch(s, @"^[\s]+$");
         }

@@ -16,7 +16,6 @@
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -84,6 +83,7 @@
     <Compile Include="GeoJSON\FeatureConverterTest.cs" />
     <Compile Include="GeoJSON\GeoJsonSerializerTest.cs" />
     <Compile Include="GeoJSON\GeoJsonWriterTest.cs" />
+    <Compile Include="GeoJSON\GitHubIssues.cs" />
     <Compile Include="GeoJSON\Issue148.cs" />
     <Compile Include="GeoJSON\Issue16Fixture.cs" />
     <Compile Include="GeoJSON\Issue32Fixture.cs" />
@@ -96,6 +96,7 @@
     <Compile Include="ShapeFile.Extended\ShapeDataReaderTests.cs" />
     <Compile Include="ShapeFile.Extended\DbaseReaderTests.cs" />
     <Compile Include="ShapeFile.Extended\HelperMethods.cs" />
+    <Compile Include="ShapeFile.Extended\ShapefileDataWriterTests.cs" />
     <Compile Include="ShapeFile.Extended\ShapeReaderTests.cs" />
     <Compile Include="ShapeFile.Extended\TempFileWriter.cs" />
     <Compile Include="SpatiaLiteFixture.cs" />
@@ -164,7 +165,6 @@
     <PreBuildEvent>
     </PreBuildEvent>
   </PropertyGroup>
-  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
